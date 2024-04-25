@@ -1,0 +1,187 @@
+import java.util.ArrayList;
+
+interface IManageable {
+    void add(Object object);
+    void remove(Object object);
+}
+
+abstract class Person {
+    private String name;
+    private int age;
+    private String ID;
+
+    public Person(String name, int age, String ID) {
+        this.name = name;
+        this.age = age;
+        this.ID = ID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public String getID() {
+        return ID;
+    }
+}
+
+
+class Student extends Person {
+    private double GPA;
+    private ArrayList<Course> coursesEnrolled;
+
+    public Student(String name, int age, String ID, double GPA) {
+        super(name, age, ID);
+        this.GPA = GPA;
+        this.coursesEnrolled = new ArrayList<>();
+    }
+
+    public double getGPA() {
+        return GPA;
+    }
+
+    public void setGPA(double GPA) {
+        this.GPA = GPA;
+    }
+
+    public ArrayList<Course> getCoursesEnrolled() {
+        return coursesEnrolled;
+    }
+
+    public void enrollInCourse(Course course) {
+        coursesEnrolled.add(course);
+    }
+
+    public void dropCourse(Course course) {
+        coursesEnrolled.remove(course);
+    }
+}
+
+class Faculty extends Person {
+    private String department;
+    private ArrayList<Course> coursesTaught;
+
+    public Faculty(String name, int age, String ID, String department) {
+        super(name, age, ID);
+        this.department = department;
+        this.coursesTaught = new ArrayList<>();
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public ArrayList<Course> getCoursesTaught() {
+        return coursesTaught;
+    }
+
+    public void assignCourse(Course course) {
+        coursesTaught.add(course);
+    }
+}
+
+class Course {
+    private String courseName;
+    private String courseCode;
+    private Faculty assignedFaculty;
+    private ArrayList<Student> enrolledStudents;
+
+    public Course(String courseName, String courseCode) {
+        this.courseName = courseName;
+        this.courseCode = courseCode;
+        this.enrolledStudents = new ArrayList<>();
+    }
+    public void assignFaculty(Faculty faculty) {
+        this.assignedFaculty = faculty;
+    } 
+}
+
+class Department {
+    private String departmentName;
+    private ArrayList<Course> courses;
+    private ArrayList<Faculty> facultyMembers;
+
+    // Constructor, getters, setters...
+} 
+
+class InvalidDataException extends Exception {
+    public InvalidDataException(String message) {
+        super(message);
+    }
+}
+
+class UniversityManagement implements IManageable {
+    private ArrayList<Student> students;
+    private ArrayList<Faculty> faculty;
+    private ArrayList<Course> courses;
+    private ArrayList<Department> departments;
+
+    public UniversityManagement() {
+        this.students = new ArrayList<>();
+        this.faculty = new ArrayList<>();
+        this.courses = new ArrayList<>();
+        this.departments = new ArrayList<>();
+    }
+
+    @Override
+    public void add(Object object) {
+        if (object instanceof Student) {
+            students.add((Student) object);
+        } else if (object instanceof Faculty) {
+            faculty.add((Faculty) object);
+        } else if (object instanceof Course) {
+            courses.add((Course) object);
+        } else if (object instanceof Department) {
+            departments.add((Department) object);
+        }
+    }
+
+    @Override
+    public void remove(Object object) {
+        if (object instanceof Student) {
+        students.remove(object);
+        } else if (object instanceof Faculty) {
+            faculty.remove(object);
+        } else if (object instanceof Course) {
+            courses.remove(object);
+        } else if (object instanceof Department) {
+            departments.remove(object);
+        }
+    }
+
+}
+
+public class Main {
+    public static void main(String[] args) {
+        UniversityManagement system = new UniversityManagement();
+
+        try {
+            Faculty s = new Faculty("kibet", 45, "bbit", "Computer Science"); 
+            Student k = new Student("masi", 20, "bbit", 3.8);
+
+            Course programming101 = new Course("Programming 101", "Advanced Object-Oriented Programming, Jan-Apr 2024, EC");
+            programming101.assignFaculty(s);
+
+            system.add(s);
+            system.add(k);
+            system.add(programming101);
+
+            k.enrollInCourse(programming101); 
+            
+            if (k.getGPA() < 0 || k.getGPA() > 4.0) {
+                throw new InvalidDataException("Invalid GPA: " + k.getGPA());
+            }
+        } catch (InvalidDataException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+}
+
